@@ -73,7 +73,18 @@ public class Solution {
                         codeLine++;
                         System.out.println("[code line]");
                     } else { // 至少存在一个注释
-
+                        if (indexOfDoubleSlash < indexOfMultiLineCommentBegin) { // 单行注释在前
+                            System.out.println("单行注释");
+                            commentLine++;
+                        } else { // 多行注释在前
+                            System.out.print("多行注释");
+                            commentLine++;
+                            if (st.indexOf("*/") < indexOfMultiLineCommentBegin) { // 多行注释起始和结束不在同一行
+                                System.out.print(" begin");
+                                hasMultiLineComment = true;
+                            }
+                            System.out.println();
+                        }
                     }
                 }
             }
