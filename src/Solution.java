@@ -25,7 +25,7 @@ public class Solution {
     }
 
     public void solution() throws Exception {
-        String path = "D:\\project\\wc\\a.txt";
+        String path = "D:\\project\\wc\\sample\\a.txt";
         File file = new File(path);
         BufferedReader br = new BufferedReader(new FileReader(file));
 
@@ -49,6 +49,34 @@ public class Solution {
                 words++;
             }
             totalWords += words;
+
+            // 扩展功能
+            if (hasMultiLineComment) {
+                commentLine++;
+                System.out.println("[comment line]");
+                int indexOfMultiLineCommentEnd = st.indexOf("*/");
+                if (indexOfMultiLineCommentEnd >= 0) {
+                    //  /*
+                    //  abc
+                    // >*/
+                    hasMultiLineComment = false;
+                    System.out.println("[comment line↑] multi-line comment end");
+                }
+            } else {
+                if (st.trim().length() <= 1) { // 判断空行
+                    blankLine++;
+                    System.out.println("[blank line]");
+                } else {
+                    int indexOfDoubleSlash = st.indexOf("//");
+                    int indexOfMultiLineCommentBegin = st.indexOf("/*");
+                    if (indexOfDoubleSlash == -1 && indexOfMultiLineCommentBegin == -1) { // 不存在注释
+                        codeLine++;
+                        System.out.println("[code line]");
+                    } else { // 至少存在一个注释
+
+                    }
+                }
+            }
         }
 
         System.out.println("characters: " + totalCharacters);
