@@ -53,14 +53,14 @@ public class Solution {
             // 扩展功能
             if (hasMultiLineComment) {
                 commentLine++;
-                System.out.println("[comment line]");
+                System.out.println("多行注释");
                 int indexOfMultiLineCommentEnd = st.indexOf("*/");
                 if (indexOfMultiLineCommentEnd >= 0) {
                     //  /*
                     //  abc
                     // >*/
                     hasMultiLineComment = false;
-                    System.out.println("[comment line↑] multi-line comment end");
+                    System.out.println("多行注释 结束");
                 }
             } else {
                 if (st.trim().length() <= 1) { // 判断空行
@@ -72,18 +72,29 @@ public class Solution {
                     if (indexOfDoubleSlash == -1 && indexOfMultiLineCommentBegin == -1) { // 不存在注释
                         codeLine++;
                         System.out.println("[code line]");
-                    } else { // 至少存在一个注释
+                    } else if (indexOfDoubleSlash != -1 && indexOfMultiLineCommentBegin == -1) { // 只存在单行注释
+                        commentLine++;
+                        System.out.println("单行注释");
+                    } else if (indexOfDoubleSlash == -1 && indexOfMultiLineCommentBegin != -1) { // 只存在多行注释
+                        commentLine++;
+                        System.out.println("多行注释");
+                        hasMultiLineComment = true;
+                        if (st.indexOf("*/") > indexOfMultiLineCommentBegin) { // 多行注释结束于同一行
+                            System.out.println("多行注释在同一行");
+                            hasMultiLineComment = false;
+                        }
+                    } else if (indexOfDoubleSlash != -1 && indexOfMultiLineCommentBegin != -1) { // 存在单行注释和多行注释
                         if (indexOfDoubleSlash < indexOfMultiLineCommentBegin) { // 单行注释在前
+                            commentLine++;
                             System.out.println("单行注释");
-                            commentLine++;
                         } else { // 多行注释在前
-                            System.out.print("多行注释");
                             commentLine++;
-                            if (st.indexOf("*/") < indexOfMultiLineCommentBegin) { // 多行注释起始和结束不在同一行
-                                System.out.print(" begin");
-                                hasMultiLineComment = true;
+                            System.out.println("多行注释");
+                            hasMultiLineComment = true;
+                            if (st.indexOf("*/") > indexOfMultiLineCommentBegin) { // 多行注释结束于同一行
+                                System.out.println("多行注释在同一行");
+                                hasMultiLineComment = false;
                             }
-                            System.out.println();
                         }
                     }
                 }
@@ -97,4 +108,6 @@ public class Solution {
         System.out.println("comment lines: " + commentLine);
         System.out.println("code lines: " + codeLine);
     }
+
+
 }
