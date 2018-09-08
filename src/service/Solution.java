@@ -33,7 +33,9 @@ public class Solution {
 
     public static void main(String[] args) throws Exception {
         Solution s = new Solution();
-        s.solution();
+//        String path = "D:\\project\\wc\\sample\\a.txt";
+        String path = "D:\\project\\wc\\sample\\queue.c";
+        s.solution(path);
 
         new MainView(s).draw();
     }
@@ -49,62 +51,7 @@ public class Solution {
         }
     }
 
-    private void recursiveGetFiles(String path, boolean currentFolder) {
-        File file = new File(path);
-        if (file.exists()) {
-            File[] fileInCurrentDir = file.listFiles();
-            for (File f : fileInCurrentDir) {
-                if (f.isDirectory()) {
-                    if (!currentFolder) {
-                        recursiveGetFiles(f.getAbsolutePath(), false);
-                    }
-                } else {
-                    files.add(f);
-                }
-            }
-        }
-    }
-
-    private void filterFiles(String filter) {
-        char[] chars = filter.toCharArray();
-        StringBuilder sb = new StringBuilder();
-        boolean pre = false;
-        for (int i = 0; i < chars.length; i++) {
-            if ('*' == chars[i]) {
-                if (pre) {
-                    sb.append(".*");
-                    pre = false;
-                } else if (i + 1 == chars.length) {
-                    sb.append("[^/]*");
-                } else {
-                    pre = true;
-                }
-            } else {
-                if (pre) {
-                    sb.append("[^/]*");
-                    pre = false;
-                }
-                if ('?' == chars[i]) {
-                    sb.append('.');
-                } else {
-                    sb.append(chars[i]);
-                }
-            }
-        }
-        System.out.println(sb.toString());
-        Pattern pattern = Pattern.compile(sb.toString());
-        Set<File> newFiles = new HashSet<>();
-        for (File f : files) {
-            String path = f.getAbsolutePath();
-            if (pattern.matcher(path).matches()) {
-                newFiles.add(f);
-            }
-        }
-        files = newFiles;
-    }
-
-    public void solution() throws Exception {
-        String path = "D:\\project\\wc\\sample\\a.txt";
+    public void solution(String path) throws Exception {
         File file = new File(path);
         BufferedReader br = new BufferedReader(new FileReader(file));
 
@@ -131,7 +78,6 @@ public class Solution {
             totalWords += words;
 
             // 扩展功能
-//            st = st.replaceAll("\\\"", "");
             int indexOfFirstQuote = st.indexOf("\"");
             int indexOfSecondQuote = st.indexOf("\"", indexOfFirstQuote + 1);
             System.out.println(indexOfFirstQuote + " " + indexOfSecondQuote);

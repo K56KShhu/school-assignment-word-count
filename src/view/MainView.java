@@ -4,10 +4,15 @@ package view;
 import service.Solution;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.sound.midi.Soundbank;
 import javax.swing.*;
+import javax.swing.filechooser.FileFilter;
 
 /**
  * @author zkyyo
@@ -34,7 +39,7 @@ public class MainView {
 
     public void draw() {
         JFrame f = new JFrame("统计");
-        f.setSize(1000, 618);
+        f.setSize(1100, 618);
         f.setLocation(200, 200);
         f.setLayout(new FlowLayout());
 
@@ -50,9 +55,31 @@ public class MainView {
         JTextArea ta = new JTextArea();
         ta.setPreferredSize(new Dimension(800, 450));
         ta.setText(s.getSb().toString());
-        //设置自动换行
         ta.setLineWrap(true);
         f.add(ta);
+
+        final JFileChooser fc = new JFileChooser();
+        JButton bOpen = new JButton("打开文件");
+        f.add(bOpen);
+        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        f.setLocationRelativeTo(null);
+        f.setVisible(true);
+        bOpen.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int returnVal = fc.showOpenDialog(f);
+                File file = fc.getSelectedFile();
+                if (returnVal == JFileChooser.APPROVE_OPTION) {
+                    Solution solution = new Solution();
+                    try {
+                        solution.solution(file.getAbsolutePath());
+                        new MainView(solution).draw();
+                    } catch (Exception e1) {
+                        e1.printStackTrace();
+                    }
+                }
+            }
+        });
 
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         f.setVisible(true);
