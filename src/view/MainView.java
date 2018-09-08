@@ -1,18 +1,15 @@
 package view;
 
 
-import service.Solution;
+import service.WordCount;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
-import javax.sound.midi.Soundbank;
 import javax.swing.*;
-import javax.swing.filechooser.FileFilter;
 
 /**
  * @author zkyyo
@@ -22,19 +19,11 @@ import javax.swing.filechooser.FileFilter;
 public class MainView {
 
     private List<String> count;
-    private Solution s;
+    private StringBuilder sb;
 
-    public MainView(Solution s) {
-        List<String> count = new ArrayList<>();
-        count.add("字符数: " + s.getTotalCharacters());
-        count.add("单词数: " + s.getTotalWords());
-        count.add("行数: " + s.getTotalLines());
-        count.add("");
-        count.add("空行数: " + s.getBlankLine());
-        count.add("注释行数: " + s.getCommentLine());
-        count.add("代码行数: " + s.getCodeLine());
+    public MainView(List<String> count, StringBuilder sb) {
         this.count = count;
-        this.s = s;
+        this.sb = sb;
     }
 
     public void draw() {
@@ -54,7 +43,7 @@ public class MainView {
 
         JTextArea ta = new JTextArea();
         ta.setPreferredSize(new Dimension(800, 450));
-        ta.setText(s.getSb().toString());
+        ta.setText(sb.toString());
         ta.setLineWrap(true);
         f.add(ta);
 
@@ -70,10 +59,17 @@ public class MainView {
                 int returnVal = fc.showOpenDialog(f);
                 File file = fc.getSelectedFile();
                 if (returnVal == JFileChooser.APPROVE_OPTION) {
-                    Solution solution = new Solution();
+                    WordCount wc = new WordCount();
                     try {
-                        solution.solution(file.getAbsolutePath());
-                        new MainView(solution).draw();
+                        wc.solution(new File(file.getAbsolutePath()));
+                        wc.getCountResult().add("字符数: " + wc.getTotalCharacters());
+                        wc.getCountResult().add("单词数: " + wc.getTotalWords());
+                        wc.getCountResult().add("行数: " + wc.getTotalLines());
+                        wc.getCountResult().add("");
+                        wc.getCountResult().add("空行数: " + wc.getTotalLines());
+                        wc.getCountResult().add("代码行: " + wc.getCodeLine());
+                        wc.getCountResult().add("注释行数: " + wc.getCommentLine());
+                        new MainView(wc.getCountResult(), wc.getText()).draw();
                     } catch (Exception e1) {
                         e1.printStackTrace();
                     }
