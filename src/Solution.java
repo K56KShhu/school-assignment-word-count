@@ -1,10 +1,13 @@
-import sun.text.resources.iw.FormatData_iw_IL;
+import org.apache.commons.io.filefilter.WildcardFileFilter;
+import org.apache.tools.ant.DirectoryScanner;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileReader;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Scanner;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -23,14 +26,30 @@ public class Solution {
 
     private boolean hasMultiLineComment = false;
 
+    private String basicPath = System.getProperty("user.dir");
+
     private Set<File> files = new HashSet<>();
 
     public static void main(String[] args) throws Exception {
-        Solution s = new Solution();
-        s.recursiveGetFiles("D:\\project\\wc\\sample", true);
-        for (File f : s.files) {
-            System.out.println(f.getName());
-            System.out.println(f.getAbsolutePath());
+        while (true) {
+            Scanner in = new Scanner(System.in);
+            String path = in.nextLine();
+            Solution s  = new Solution();
+            s.getFiles(path);
+            for (File f : s.files) {
+                System.out.println(f.getAbsolutePath());
+            }
+        }
+    }
+
+    private void getFiles(String path) {
+        DirectoryScanner scanner = new DirectoryScanner();
+        scanner.setBasedir(basicPath);
+        scanner.setIncludes(new String[]{path});
+        scanner.setCaseSensitive(false);
+        scanner.scan();
+        for (String file : scanner.getIncludedFiles()) {
+            files.add(new File(basicPath + file));
         }
     }
 
@@ -50,6 +69,43 @@ public class Solution {
         }
     }
 
+    private void filterFiles(String filter) {
+        char[] chars = filter.toCharArray();
+        StringBuilder sb = new StringBuilder();
+        boolean pre = false;
+        for (int i = 0; i < chars.length; i++) {
+            if ('*' == chars[i]) {
+                if (pre) {
+                    sb.append(".*");
+                    pre = false;
+                } else if (i + 1 == chars.length) {
+                    sb.append("[^/]*");
+                } else {
+                    pre = true;
+                }
+            } else {
+                if (pre) {
+                    sb.append("[^/]*");
+                    pre = false;
+                }
+                if ('?' == chars[i]) {
+                    sb.append('.');
+                } else {
+                    sb.append(chars[i]);
+                }
+            }
+        }
+        System.out.println(sb.toString());
+        Pattern pattern = Pattern.compile(sb.toString());
+        Set<File> newFiles = new HashSet<>();
+        for (File f : files) {
+            String path = f.getAbsolutePath();
+            if (pattern.matcher(path).matches()) {
+                newFiles.add(f);
+            }
+        }
+        files = newFiles;
+    }
 
     public void solution() throws Exception {
         String path = "D:\\project\\wc\\sample\\a.txt";
