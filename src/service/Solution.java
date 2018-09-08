@@ -1,14 +1,12 @@
 package service;
 
 import org.apache.tools.ant.DirectoryScanner;
+import view.MainView;
 
-import javax.sound.midi.Soundbank;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.util.HashSet;
-import java.util.Scanner;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -27,6 +25,8 @@ public class Solution {
 
     private boolean hasMultiLineComment = false;
 
+    private StringBuilder sb = new StringBuilder();
+
     private String basicPath = System.getProperty("user.dir");
 
     private Set<File> files = new HashSet<>();
@@ -35,6 +35,7 @@ public class Solution {
         Solution s = new Solution();
         s.solution();
 
+        new MainView(s).draw();
     }
 
     private void getFiles(String path) {
@@ -110,6 +111,7 @@ public class Solution {
         String st;
 
         while ((st = br.readLine()) != null) {
+            sb.append(st).append("\n");
             System.out.println(">" + st);
 
             // 基本功能
@@ -198,19 +200,31 @@ public class Solution {
         System.out.println("code lines: " + codeLine);
     }
 
-/*
-    class FileFilterImpl implements FileFilter {
-        private String extension;
-
-        public FileFilterImpl(String extension) {
-            this.extension = extension;
-        }
-
-        @Override
-        public boolean accept(File pathname) {
-            return pathname.getName().endsWith(extension);
-        }
+    public int getTotalCharacters() {
+        return totalCharacters;
     }
-*/
 
+    public int getTotalWords() {
+        return totalWords;
+    }
+
+    public int getTotalLines() {
+        return totalLines;
+    }
+
+    public int getBlankLine() {
+        return blankLine;
+    }
+
+    public int getCommentLine() {
+        return commentLine;
+    }
+
+    public int getCodeLine() {
+        return codeLine;
+    }
+
+    public StringBuilder getSb() {
+        return sb;
+    }
 }
