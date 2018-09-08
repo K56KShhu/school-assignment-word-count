@@ -1,6 +1,8 @@
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -19,10 +21,12 @@ public class Solution {
 
     private boolean hasMultiLineComment = false;
 
+    private List<String> files = new LinkedList<>();
 
     public static void main(String[] args) throws Exception {
         new Solution().solution();
     }
+
 
     public void solution() throws Exception {
         String path = "D:\\project\\wc\\sample\\a.txt";
@@ -51,6 +55,17 @@ public class Solution {
             totalWords += words;
 
             // 扩展功能
+//            st = st.replaceAll("\\\"", "");
+            int indexOfFirstQuote = st.indexOf("\"");
+            int indexOfSecondQuote = st.indexOf("\"", indexOfFirstQuote + 1);
+            System.out.println(indexOfFirstQuote + " " + indexOfSecondQuote);
+            if (indexOfFirstQuote != -1 && indexOfSecondQuote != -1) {
+                st = st.substring(0, indexOfFirstQuote) + st.substring(indexOfSecondQuote + 1, st.length() - 1);
+            } else if (indexOfFirstQuote != -1 && indexOfSecondQuote == -1) {
+                st = st.substring(0, indexOfFirstQuote);
+            }
+            System.out.println("处理后: " + st);
+
             if (hasMultiLineComment) {
                 commentLine++;
                 System.out.println("多行注释");
@@ -65,13 +80,13 @@ public class Solution {
             } else {
                 if (st.trim().length() <= 1) { // 判断空行
                     blankLine++;
-                    System.out.println("[blank line]");
+                    System.out.println("空白行");
                 } else {
                     int indexOfDoubleSlash = st.indexOf("//");
                     int indexOfMultiLineCommentBegin = st.indexOf("/*");
                     if (indexOfDoubleSlash == -1 && indexOfMultiLineCommentBegin == -1) { // 不存在注释
                         codeLine++;
-                        System.out.println("[code line]");
+                        System.out.println("代码行");
                     } else if (indexOfDoubleSlash != -1 && indexOfMultiLineCommentBegin == -1) { // 只存在单行注释
                         commentLine++;
                         System.out.println("单行注释");

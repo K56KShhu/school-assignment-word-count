@@ -1,4 +1,6 @@
 import java.util.Arrays;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author zkyyo
@@ -6,7 +8,7 @@ import java.util.Arrays;
  **/
 public class Test {
     public static void main(String[] args) {
-        String st = "tt";
-        System.out.println(Arrays.toString(st.split("tt")));
+        String st = "ccccccabcdddcddddabcsd";
+        st.substring(-1);
     }
 }
