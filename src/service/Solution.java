@@ -1,12 +1,11 @@
-import org.apache.commons.io.filefilter.WildcardFileFilter;
+package service;
+
 import org.apache.tools.ant.DirectoryScanner;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileFilter;
 import java.io.FileReader;
 import java.util.HashSet;
-import java.util.Scanner;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -31,15 +30,7 @@ public class Solution {
     private Set<File> files = new HashSet<>();
 
     public static void main(String[] args) throws Exception {
-        while (true) {
-            Scanner in = new Scanner(System.in);
-            String path = in.nextLine();
-            Solution s  = new Solution();
-            s.getFiles(path);
-            for (File f : s.files) {
-                System.out.println(f.getAbsolutePath());
-            }
-        }
+        System.out.println("hello world!");
     }
 
     private void getFiles(String path) {
