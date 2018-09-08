@@ -1,8 +1,10 @@
+import sun.text.resources.iw.FormatData_iw_IL;
+
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileReader;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -21,10 +23,31 @@ public class Solution {
 
     private boolean hasMultiLineComment = false;
 
-    private List<String> files = new LinkedList<>();
+    private Set<File> files = new HashSet<>();
 
     public static void main(String[] args) throws Exception {
-        new Solution().solution();
+        Solution s = new Solution();
+        s.recursiveGetFiles("D:\\project\\wc\\sample", true);
+        for (File f : s.files) {
+            System.out.println(f.getName());
+            System.out.println(f.getAbsolutePath());
+        }
+    }
+
+    private void recursiveGetFiles(String path, boolean currentFolder) {
+        File file = new File(path);
+        if (file.exists()) {
+            File[] fileInCurrentDir = file.listFiles();
+            for (File f : fileInCurrentDir) {
+                if (f.isDirectory()) {
+                    if (!currentFolder) {
+                        recursiveGetFiles(f.getAbsolutePath(), false);
+                    }
+                } else {
+                    files.add(f);
+                }
+            }
+        }
     }
 
 
@@ -124,5 +147,19 @@ public class Solution {
         System.out.println("code lines: " + codeLine);
     }
 
+/*
+    class FileFilterImpl implements FileFilter {
+        private String extension;
+
+        public FileFilterImpl(String extension) {
+            this.extension = extension;
+        }
+
+        @Override
+        public boolean accept(File pathname) {
+            return pathname.getName().endsWith(extension);
+        }
+    }
+*/
 
 }
