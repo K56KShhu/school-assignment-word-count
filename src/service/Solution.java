@@ -2,10 +2,12 @@ package service;
 
 import org.apache.tools.ant.DirectoryScanner;
 
+import javax.sound.midi.Soundbank;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.HashSet;
+import java.util.Scanner;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -30,7 +32,9 @@ public class Solution {
     private Set<File> files = new HashSet<>();
 
     public static void main(String[] args) throws Exception {
-        System.out.println("hello world!");
+        Solution s = new Solution();
+        s.solution();
+
     }
 
     private void getFiles(String path) {
