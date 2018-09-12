@@ -37,7 +37,7 @@ public class WordCount {
             System.out.println("请输入参数");
             System.exit(-1);
         }
-        List<String> ops = new ArrayList<>();
+        Set<String> ops = new HashSet<>();
         String path = null;
         for (String arg : args) {
             if (arg.startsWith("-")) {
@@ -46,18 +46,35 @@ public class WordCount {
                 if (path == null) {
                     path = arg;
                 } else {
-                    System.out.println("参数错误");
+                    System.out.println("参数错误 重复地址");
                     System.exit(-1);
                 }
             }
+        }
+        if (path == null && !ops.contains("-x")) {
+            System.out.println("参数错误 路径为空");
+            System.exit(-1);
+        }
+        if (ops.contains("-x")) {
+//            wc.getCountResult().add("字符数: " + wc.getTotalCharacters());
+//            wc.getCountResult().add("单词数: " + wc.getTotalWords());
+//            wc.getCountResult().add("行数: " + wc.getTotalLines());
+//            wc.getCountResult().add("");
+//            wc.getCountResult().add("空行数: " + wc.getTotalLines());
+//            wc.getCountResult().add("代码行: " + wc.getCodeLine());
+//            wc.getCountResult().add("注释行数: " + wc.getCommentLine());
+            new MainView(new LinkedList<>(), new StringBuilder()).draw();
+            return;
         }
 
         // 计数统计
         WordCount wc = new WordCount();
         wc.filterFiles(path);
         for (File f : wc.getFiles()) {
-            System.out.println("count " + f.getAbsolutePath());
-            wc.solution(f);
+            if (!f.getAbsolutePath().endsWith(".jar")) {
+                System.out.println("count " + f.getAbsolutePath());
+                wc.solution(f);
+            }
         }
 
         if (ops.contains("-c")) {
@@ -74,16 +91,7 @@ public class WordCount {
             System.out.println("代码行: " + wc.getCodeLine());
             System.out.println("注释行数: " + wc.getCommentLine());
         }
-        if (ops.contains("-x")) {
-            wc.getCountResult().add("字符数: " + wc.getTotalCharacters());
-            wc.getCountResult().add("单词数: " + wc.getTotalWords());
-            wc.getCountResult().add("行数: " + wc.getTotalLines());
-            wc.getCountResult().add("");
-            wc.getCountResult().add("空行数: " + wc.getTotalLines());
-            wc.getCountResult().add("代码行: " + wc.getCodeLine());
-            wc.getCountResult().add("注释行数: " + wc.getCommentLine());
-            new MainView(wc.getCountResult(), wc.getText()).draw();
-        }
+
         System.out.println();
 
     }
@@ -106,7 +114,6 @@ public class WordCount {
 
         while ((st = br.readLine()) != null) {
             text.append(st).append("\n");
-//            System.out.println(">" + st);
 
             // 基本功能
             // 匹配字符数
@@ -125,58 +132,49 @@ public class WordCount {
             totalWords += words;
 
             // 扩展功能
-            int indexOfFirstQuote = st.indexOf("\"");
-            int indexOfSecondQuote = st.indexOf("\"", indexOfFirstQuote + 1);
-            if (indexOfFirstQuote != -1 && indexOfSecondQuote != -1) {
-                st = st.substring(0, indexOfFirstQuote) + st.substring(indexOfSecondQuote + 1, st.length() - 1);
-            } else if (indexOfFirstQuote != -1 && indexOfSecondQuote == -1) {
-                st = st.substring(0, indexOfFirstQuote);
-            }
-//            System.out.println("处理后: " + st);
-
-            if (hasMultiLineComment) {
-                commentLine++;
-//                System.out.println("多行注释");
-                int indexOfMultiLineCommentEnd = st.indexOf("*/");
-                if (indexOfMultiLineCommentEnd >= 0) {
-                    //  /*
-                    //  abc
-                    // >*/
-                    hasMultiLineComment = false;
-//                    System.out.println("多行注释 结束");
+            if (!f.getAbsolutePath().endsWith(".txt")) {
+                int indexOfFirstQuote = st.indexOf("\"");
+                int indexOfSecondQuote = st.indexOf("\"", indexOfFirstQuote + 1);
+                if (indexOfFirstQuote != -1 && indexOfSecondQuote != -1) {
+                    st = st.substring(0, indexOfFirstQuote) + st.substring(indexOfSecondQuote + 1, st.length() - 1);
+                } else if (indexOfFirstQuote != -1 && indexOfSecondQuote == -1) {
+                    st = st.substring(0, indexOfFirstQuote);
                 }
-            } else {
-                if (st.trim().length() <= 1) { // 判断空行
-                    blankLine++;
-//                    System.out.println("空白行");
+
+                if (hasMultiLineComment) {
+                    commentLine++;
+                    int indexOfMultiLineCommentEnd = st.indexOf("*/");
+                    if (indexOfMultiLineCommentEnd >= 0) {
+                        //  /*
+                        //  abc
+                        // >*/
+                        hasMultiLineComment = false;
+                    }
                 } else {
-                    int indexOfDoubleSlash = st.indexOf("//");
-                    int indexOfMultiLineCommentBegin = st.indexOf("/*");
-                    if (indexOfDoubleSlash == -1 && indexOfMultiLineCommentBegin == -1) { // 不存在注释
-                        codeLine++;
-//                        System.out.println("代码行");
-                    } else if (indexOfDoubleSlash != -1 && indexOfMultiLineCommentBegin == -1) { // 只存在单行注释
-                        commentLine++;
-//                        System.out.println("单行注释");
-                    } else if (indexOfDoubleSlash == -1 && indexOfMultiLineCommentBegin != -1) { // 只存在多行注释
-                        commentLine++;
-//                        System.out.println("多行注释");
-                        hasMultiLineComment = true;
-                        if (st.indexOf("*/") > indexOfMultiLineCommentBegin) { // 多行注释结束于同一行
-//                            System.out.println("多行注释在同一行");
-                            hasMultiLineComment = false;
-                        }
-                    } else if (indexOfDoubleSlash != -1 && indexOfMultiLineCommentBegin != -1) { // 存在单行注释和多行注释
-                        if (indexOfDoubleSlash < indexOfMultiLineCommentBegin) { // 单行注释在前
+                    if (st.trim().length() <= 1) { // 判断空行
+                        blankLine++;
+                    } else {
+                        int indexOfDoubleSlash = st.indexOf("//");
+                        int indexOfMultiLineCommentBegin = st.indexOf("/*");
+                        if (indexOfDoubleSlash == -1 && indexOfMultiLineCommentBegin == -1) { // 不存在注释
+                            codeLine++;
+                        } else if (indexOfDoubleSlash != -1 && indexOfMultiLineCommentBegin == -1) { // 只存在单行注释
                             commentLine++;
-//                            System.out.println("单行注释");
-                        } else { // 多行注释在前
+                        } else if (indexOfDoubleSlash == -1 && indexOfMultiLineCommentBegin != -1) { // 只存在多行注释
                             commentLine++;
-//                            System.out.println("多行注释");
                             hasMultiLineComment = true;
                             if (st.indexOf("*/") > indexOfMultiLineCommentBegin) { // 多行注释结束于同一行
-//                                System.out.println("多行注释在同一行");
                                 hasMultiLineComment = false;
+                            }
+                        } else if (indexOfDoubleSlash != -1 && indexOfMultiLineCommentBegin != -1) { // 存在单行注释和多行注释
+                            if (indexOfDoubleSlash < indexOfMultiLineCommentBegin) { // 单行注释在前
+                                commentLine++;
+                            } else { // 多行注释在前
+                                commentLine++;
+                                hasMultiLineComment = true;
+                                if (st.indexOf("*/") > indexOfMultiLineCommentBegin) { // 多行注释结束于同一行
+                                    hasMultiLineComment = false;
+                                }
                             }
                         }
                     }
