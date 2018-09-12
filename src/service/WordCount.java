@@ -87,7 +87,7 @@ public class WordCount {
             System.out.println("行数: " + wc.getTotalLines());
         }
         if (ops.contains("-a")) {
-            System.out.println("空行数: " + wc.getTotalLines());
+            System.out.println("空行数: " + wc.getBlankLine());
             System.out.println("代码行: " + wc.getCodeLine());
             System.out.println("注释行数: " + wc.getCommentLine());
         }
